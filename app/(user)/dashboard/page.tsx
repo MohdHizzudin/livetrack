@@ -20,10 +20,13 @@ export default function Dashboard() {
           </h2>
         </div>
 
-        <Button
-          onClick={() => setIsSharing(!isSharing)}
-          className={`px-8 py-6 rounded-3xl text-lg font-semibold flex items-center gap-3 ${isSharing ? 'bg-red-500 hover:bg-red-600' : 'bg-emerald-500 hover:bg-emerald-600'}`}
-        >
+         <button
+            onClick={() => setIsSharing(!isSharing)}
+          className={`px-8 py-6 rounded-3xl text-lg font-semibold flex items-center gap-3 transition-colors ${isSharing ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-emerald-500 hover:bg-emerald-600 text-white'}`}
+            >
+          {isSharing ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
+          {isSharing ? 'Henti Share' : 'Mulakan Live Share'}
+          </button>
           {isSharing ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
           {isSharing ? 'Henti Share' : 'Mulakan Live Share'}
         </Button>
