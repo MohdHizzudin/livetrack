@@ -3,7 +3,6 @@ import { useState } from 'react';
 import LiveMap from '@/components/Map';
 import { useLiveLocation } from '@/hooks/useLocation';
 import SOSButton from '@/components/SOSButton';
-import { Button } from '@/components/ui/button'; // jika pakai shadcn, kalau tidak guna button biasa
 import { Power, PowerOff } from 'lucide-react';
 
 export default function Dashboard() {
