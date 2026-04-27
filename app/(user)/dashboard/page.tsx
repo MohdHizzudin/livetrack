@@ -10,7 +10,7 @@ export default function Dashboard() {
   const { location, users } = useLiveLocation(isSharing);
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* Top Bar */}
       <div className="h-16 bg-white border-b shadow-sm flex items-center px-8 justify-between z-10">
         <div className="flex items-center gap-3">
@@ -20,25 +20,35 @@ export default function Dashboard() {
           </h2>
         </div>
 
-         <button
-            onClick={() => setIsSharing(!isSharing)}
-          className={`px-8 py-6 rounded-3xl text-lg font-semibold flex items-center gap-3 transition-colors ${isSharing ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-emerald-500 hover:bg-emerald-600 text-white'}`}
-            >
-          {isSharing ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
-          {isSharing ? 'Henti Share' : 'Mulakan Live Share'}
-          </button>
-          {isSharing ? <PowerOff className="w-6 h-6" /> : <Power className="w-6 h-6" />}
-          {isSharing ? 'Henti Share' : 'Mulakan Live Share'}
-        </Button>
+        <button
+          onClick={() => setIsSharing(!isSharing)}
+          className={`px-8 py-6 rounded-3xl text-lg font-semibold flex items-center gap-3 transition-colors ${
+            isSharing 
+              ? 'bg-red-500 hover:bg-red-600 text-white' 
+              : 'bg-emerald-500 hover:bg-emerald-600 text-white'
+          }`}
+        >
+          {isSharing ? (
+            <>
+              <PowerOff className="w-6 h-6" />
+              Henti Share
+            </>
+          ) : (
+            <>
+              <Power className="w-6 h-6" />
+              Mulakan Live Share
+            </>
+          )}
+        </button>
       </div>
 
-      {/* Map */}
+      {/* Map Area */}
       <div className="flex-1 relative">
         <LiveMap locations={users} currentUser={location} />
       </div>
 
       {/* SOS Button */}
       <SOSButton />
-    </>
+    </div>
   );
 }
