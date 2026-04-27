@@ -1,6 +1,10 @@
 'use client';
 import { useState } from 'react';
-import LiveMap from '@/components/Map';
+import dynamic from 'next/dynamic';
+const LiveMap = dynamic(() => import('@/components/Map'), { 
+  ssr: false,
+  loading: () => <div className="flex items-center justify-center h-full">Memuatkan peta...</div>
+});
 import { useLiveLocation } from '@/hooks/useLocation';
 import SOSButton from '@/components/SOSButton';
 import { Power, PowerOff } from 'lucide-react';
