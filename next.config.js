@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',           // Ini yang penting
+  output: 'standalone',     // ← Ini yang penting
   images: {
-    unoptimized: true,        // Supaya tak error gambar
+    unoptimized: true,
   },
-  trailingSlash: true,
 };
 
 module.exports = nextConfig;
