@@ -8,12 +8,15 @@ export default function GroupsPage() {
   const [groups, setGroups] = useState<any[]>([]);
 
   useEffect(() => {
+    if (!auth.currentUser) return;   // ← Tambahan penting
+
     const groupsRef = ref(database, 'groups');
     onValue(groupsRef, (snap) => {
       const data = snap.val();
       if (data) {
         const myGroups = Object.entries(data).filter(([_, g]: any) => 
-          g.members && g.members[auth.currentUser?.uid]
+          // ← Fix TypeScript: pastikan uid wujud sebelum guna sebagai key
+          g.members && auth.currentUser?.uid && g.members[auth.currentUser.uid]
         );
         setGroups(myGroups);
       }
@@ -22,6 +25,7 @@ export default function GroupsPage() {
 
   const createGroup = async () => {
     if (!groupName || !auth.currentUser) return;
+    
     const newGroupRef = push(ref(database, 'groups'));
     await update(newGroupRef, {
       name: groupName,
@@ -29,6 +33,7 @@ export default function GroupsPage() {
       members: { [auth.currentUser.uid]: true },
       createdAt: Date.now()
     });
+    
     setGroupName('');
   };
 
@@ -55,7 +60,9 @@ export default function GroupsPage() {
         {groups.map(([id, group]: any) => (
           <div key={id} className="bg-white p-6 rounded-3xl shadow hover:shadow-xl transition">
             <h3 className="font-semibold text-2xl">{group.name}</h3>
-            <p className="text-sm text-gray-500 mt-1">Ahli: {Object.keys(group.members || {}).length}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Ahli: {Object.keys(group.members || {}).length}
+            </p>
           </div>
         ))}
       </div>
