@@ -17,9 +17,9 @@ export function useLiveLocation(isSharing: boolean) {
           lng: position.coords.longitude,
           accuracy: position.coords.accuracy,
           timestamp: Date.now(),
-          name: auth.currentUser?.displayName,
+          name: auth.currentUser?.displayName || 'User',
           photo: auth.currentUser?.photoURL,
-          uid: auth.currentUser.uid
+          uid: auth.currentUser!.uid   // ← Fix: non-null assertion
         };
 
         set(ref(database, 'liveLocations/' + auth.currentUser!.uid), newLoc);
@@ -37,6 +37,7 @@ export function useLiveLocation(isSharing: boolean) {
     return () => navigator.geolocation.clearWatch(watchId);
   }, [isSharing]);
 
+  // Listen semua user yang sedang share lokasi
   useEffect(() => {
     const locRef = ref(database, 'liveLocations');
     onValue(locRef, (snap) => {
