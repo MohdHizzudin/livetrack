@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',     // ← Ini yang penting
-  images: {
-    unoptimized: true,
-  },
+  // Biarkan kosong untuk Vercel
+  // Jangan letak output: 'export'
 };
 
 module.exports = nextConfig;
