@@ -4,8 +4,8 @@ import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import Link from 'next/link';
-import { MapPin, Users, Clock, Settings, LogOut, Crown } from 'lucide-react';
 import { isAdmin } from '@/lib/role';
+import { MapPin, Users, Clock, Settings, LogOut, Crown } from 'lucide-react';
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -20,7 +20,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
         setIsAdminUser(adminCheck);
       }
     });
-    return () => unsubscribe();
+    return unsubscribe();
   }, [router]);
 
   const handleLogout = async () => {
