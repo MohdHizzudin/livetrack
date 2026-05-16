@@ -1,0 +1,26 @@
+{
+  "name": "LiveTrack",
+  "short_name": "LiveTrack",
+  "description": "Pengesan lokasi langsung untuk keluarga & orang tersayang.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#4f46e5",
+  "theme_color": "#4f46e5",
+  "lang": "ms",
+  "categories": ["lifestyle", "navigation", "safety"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

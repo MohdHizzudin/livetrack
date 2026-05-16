@@ -1,77 +1,69 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
 import Link from 'next/link';
-import { isAdmin } from '@/lib/role';
-import { ArrowLeft, LogOut, Crown } from 'lucide-react';
+import { ArrowLeft, Crown, LogOut } from 'lucide-react';
+import { signOutCurrentUser, useAuth } from '@/hooks/useAuth';
+import { isAdmin as checkIsAdmin } from '@/lib/role';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const { user, ready } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [allowed, setAllowed] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (!user) {
-        router.push('/');
+    if (!ready) return;
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+    void checkIsAdmin().then((ok) => {
+      if (!ok) {
+        router.replace('/map');
       } else {
-        const adminCheck = await isAdmin();
-        if (!adminCheck) {
-          router.push('/dashboard'); // Redirect kalau bukan admin
-        } else {
-          setLoading(false);
-        }
+        setAllowed(true);
       }
+      setLoading(false);
     });
-    return unsubscribe;
-  }, [router]);
+  }, [ready, user, router]);
 
-  if (loading) {
+  if (loading || !allowed) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full mx-auto"></div>
-          <p className="mt-4 text-gray-500">Memuatkan Admin Panel...</p>
+          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-brand-500 border-t-transparent" />
+          <p className="mt-3 text-sm text-gray-500">Menyemak akses admin...</p>
         </div>
       </div>
     );
   }
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    router.push('/');
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Top Admin Bar */}
-      <div className="bg-white border-b shadow-sm px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-black">
-            <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Kembali ke Dashboard</span>
+      <header className="flex items-center justify-between border-b border-gray-100 bg-white px-4 py-3 md:px-8">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/map"
+            className="flex items-center gap-1 rounded-2xl px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+          >
+            <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
-          <div className="h-6 w-px bg-gray-300"></div>
-          <div className="flex items-center gap-2 text-amber-600 font-semibold">
-            <Crown className="w-6 h-6" />
-            ADMIN PANEL
+          <div className="h-6 w-px bg-gray-200" />
+          <div className="flex items-center gap-2 text-amber-700">
+            <Crown className="h-4 w-4" />
+            <span className="text-sm font-bold">Admin Panel</span>
           </div>
         </div>
-
         <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 text-red-600 hover:bg-red-50 px-6 py-3 rounded-3xl font-medium"
+          type="button"
+          onClick={() => void signOutCurrentUser()}
+          className="inline-flex items-center gap-1 rounded-2xl px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
         >
-          <LogOut className="w-5 h-5" />
-          Log Keluar
+          <LogOut className="h-4 w-4" /> Log Keluar
         </button>
-      </div>
-
-      {/* Content Admin */}
-      <div className="p-8">
-        {children}
-      </div>
+      </header>
+      <div className="p-4 md:p-8">{children}</div>
     </div>
   );
 }

@@ -1,6 +1,13 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getDatabase } from "firebase/database";
+'use client';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import {
+  getAuth,
+  GoogleAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+  type Auth,
+} from 'firebase/auth';
+import { getDatabase, type Database } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -12,7 +19,48 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const database = getDatabase(app);
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.databaseURL &&
+    firebaseConfig.projectId &&
+    firebaseConfig.appId,
+);
+
+let app: FirebaseApp | null = null;
+let authInstance: Auth | null = null;
+let dbInstance: Database | null = null;
+
+function ensureApp(): FirebaseApp {
+  if (!isFirebaseConfigured) {
+    throw new Error(
+      'Firebase belum dikonfigurasi. Sila isi NEXT_PUBLIC_FIREBASE_* dalam .env.local',
+    );
+  }
+  if (!app) {
+    app = getApps().length ? getApps()[0]! : initializeApp(firebaseConfig);
+  }
+  return app;
+}
+
+export function getFirebaseAuth(): Auth {
+  if (!authInstance) {
+    authInstance = getAuth(ensureApp());
+    if (typeof window !== 'undefined') {
+      setPersistence(authInstance, browserLocalPersistence).catch(() => {
+        /* ignore */
+      });
+    }
+  }
+  return authInstance;
+}
+
+export function getFirebaseDb(): Database {
+  if (!dbInstance) {
+    dbInstance = getDatabase(ensureApp());
+  }
+  return dbInstance;
+}
+
 export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });

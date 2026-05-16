@@ -1,11 +1,10 @@
-// lib/role.ts
-import { auth, database } from './firebase';
+'use client';
 import { ref, get } from 'firebase/database';
+import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
 export async function isAdmin(): Promise<boolean> {
+  const auth = getFirebaseAuth();
   if (!auth.currentUser) return false;
-  
-  const userRef = ref(database, `users/${auth.currentUser.uid}/role`);
-  const snapshot = await get(userRef);
-  return snapshot.val() === 'admin';
+  const snap = await get(ref(getFirebaseDb(), `users/${auth.currentUser.uid}/role`));
+  return snap.val() === 'admin';
 }
