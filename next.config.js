@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Biarkan kosong untuk Vercel
-  // Jangan letak output: 'export'
+  output: process.env.BUILD_TARGET === 'capacitor' ? 'export' : undefined,
+  images: { unoptimized: true },
+  trailingSlash: true,
+  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
